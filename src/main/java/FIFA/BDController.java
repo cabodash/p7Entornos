@@ -356,4 +356,176 @@ public class BDController {
 			System.out.println("Error en modEquipo: " + j);
 		}
 	}
+	public void editarEquipo(int cod_equipo, String nombre, int cod_liga) {
+	    String sql = "UPDATE equipos SET nombre = '" + nombre + "', cod_liga = " + cod_liga + " WHERE cod_equipo = " + cod_equipo;
+	    
+	    try {
+	        Statement st = this.conexion.createStatement();
+	        // System.out.println(sql);
+
+	        st.executeUpdate(sql);
+	        System.out.println("Equipo actualizado en la tabla equipos");
+
+	        st.close();
+	    } catch (SQLException e) {
+	        // TODO Auto-generated catch block
+	        System.out.println("Error en editarEquipo: " + e.getMessage());
+	    }
+	}
+	public void editarLiga(int cod_liga, String nombre, String pais) {
+	    String sql = "UPDATE ligas SET nombre = '" + nombre + "', pais = '" + pais + "' WHERE cod_liga = " + cod_liga;
+	    
+	    try {
+	        Statement st = this.conexion.createStatement();
+	        // System.out.println(sql);
+
+	        st.executeUpdate(sql);
+	        System.out.println("Liga actualizada en la tabla ligas");
+
+	        st.close();
+	    } catch (SQLException e) {
+	        // TODO Auto-generated catch block
+	        System.out.println("Error en editarLiga: " + e.getMessage());
+	    }
+	}
+	
+	public void editarJugador(int cod_jugador, String nombre, int cod_equipo, String pierna, int altura, String pais) {
+	    String sql = "UPDATE jugadores SET nombre = '" + nombre + "', cod_equipo = " + cod_equipo + ", pierna = '" + pierna + 
+	                 "', altura = " + altura + ", pais = '" + pais + "' WHERE cod_jugador = " + cod_jugador;
+	    
+	    try {
+	        Statement st = this.conexion.createStatement();
+	        // System.out.println(sql);
+
+	        st.executeUpdate(sql);
+	        System.out.println("Jugador actualizado en la tabla jugadores");
+
+	        st.close();
+	    } catch (SQLException e) {
+	        // TODO Auto-generated catch block
+	        System.out.println("Error en editarJugador: " + e.getMessage());
+	    }
+	}
+	public void bajaEquipo(int cod_equipo) {
+		String sql = "DELETE FROM equipos where cod_equipo='"+ cod_equipo +"'";
+		try {
+			Statement st = this.conexion.createStatement();
+			// System.out.println(sql);
+
+			st.execute(sql);
+			System.out.println("Equipo eliminado de la tabla equipos");
+
+			st.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error en bajaEquipo: " + e.getMessage());
+		}
+	}
+	public void bajaLiga(int cod_liga) {
+		String sql = "DELETE FROM ligas where cod_liga="+ cod_liga;
+		try {
+			Statement st = this.conexion.createStatement();
+			// System.out.println(sql);
+
+			st.execute(sql);
+			System.out.println("Liga eliminada de la tabla ligas");
+
+			st.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error en bajaLiga: " + e.getMessage());
+		}
+	}
+	public int maxcodJugador() {
+		int codigoMasAlto = 0;
+		try {
+			Statement st = this.conexion.createStatement();
+			ResultSet rs = st.executeQuery("SELECT MAX(cod_jugador) FROM jugadores");
+			if (rs.next()) {
+				codigoMasAlto = rs.getInt("MAX(cod_jugador)");
+			}
+			rs.close();
+			st.close();
+		} catch (SQLException e) {
+			System.out.println("Error en maxcodJugador: " + e.getMessage());
+		}
+		return codigoMasAlto;
+	}
+	public void altaJugador(int cod_jug, String nombre, int cod_equipo, String pierna, int altura, String pais) {
+		String sql = "INSERT INTO jugadores values("+ cod_jug +",'" + nombre + "'," + cod_equipo + ",'" + pierna + "'," + altura + 
+				",'" + pais + "')";
+		try {
+			Statement st = this.conexion.createStatement();
+			// System.out.println(sql);
+
+			st.execute(sql);
+			System.out.println("Jugador insertado en la tabla jugadores");
+
+			st.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error en altaJugador: " + e.getMessage());
+		}
+	}
+	public void bajaJugador(int cod_jug) {
+		String sql = "DELETE FROM jugadores where cod_jugador='"+ cod_jug +"'";
+		try {
+			Statement st = this.conexion.createStatement();
+			// System.out.println(sql);
+
+			st.execute(sql);
+			System.out.println("Jugador eliminado de la tabla jugadores");
+
+			st.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error en bajaJugador: " + e.getMessage());
+		}
+	}
+	public int maxcodEquipo() {
+		int codigoMasAlto = 0;
+		try {
+			Statement st = this.conexion.createStatement();
+			ResultSet rs = st.executeQuery("SELECT MAX(cod_equipo) FROM equipos");
+			if (rs.next()) {
+				codigoMasAlto = rs.getInt("MAX(cod_equipo)");
+			}
+			rs.close();
+			st.close();
+		} catch (SQLException e) {
+			System.out.println("Error en maxcodEquipo: " + e.getMessage());
+		}
+		return codigoMasAlto;
+	}
+	public int maxcodLiga() {
+		int codigoMasAlto = 0;
+		try {
+			Statement st = this.conexion.createStatement();
+			ResultSet rs = st.executeQuery("SELECT MAX(cod_liga) FROM ligas");
+			if (rs.next()) {
+				codigoMasAlto = rs.getInt("MAX(cod_liga)");
+			}
+			rs.close();
+			st.close();
+		} catch (SQLException e) {
+			System.out.println("Error en maxcodLiga: " + e.getMessage());
+		}
+		return codigoMasAlto;
+	}
+	
+	public void altaEquipo(int cod_equipo, String nombre, int cod_liga) {
+		String sql = "INSERT INTO equipos values(" + cod_equipo + ",'" + nombre + "', "+ cod_liga +")";
+		try {
+			Statement st = this.conexion.createStatement();
+			// System.out.println(sql);
+
+			st.execute(sql);
+			System.out.println("Equipo insertado en la tabla equipos");
+
+			st.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error en altaEquipo: " + e.getMessage());
+		}
+	}
 }

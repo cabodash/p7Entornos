@@ -19,87 +19,135 @@
 	<div id="page-wrapper">
 
 		<%
-		//variables globales
-		BDController connexion = new BDController();
-		String tipo = request.getParameter("tipo");
-		String message = "";
+		//variables glovales
+				String tipo = request.getParameter("tipo");
+				BDController conexionBD = new BDController();
+				String estado="", contenido="";
+				
+				//Jugador
+				if (tipo.equalsIgnoreCase("altajugador")) {
+					int cod_jugador = (conexionBD.maxcodJugador() + 1);
+					String nombre = request.getParameter("nombre");
+					String pierna = request.getParameter("pierna");
+					int cod_equipo = Integer.parseInt(request.getParameter("cod_equipo"));
+					String pais = request.getParameter("pais");
+					int altura = Integer.parseInt(request.getParameter("altura"));
+					
+					if(conexionBD.existeEquipo(cod_equipo)){
+						conexionBD.altaJugador(cod_jugador, nombre, cod_equipo, pierna, altura, pais);
+						estado="success";
+						contenido="Jugador+añadido+correctamente";
+					}else{
+						estado="fail";
+						contenido="El+codigo+de+equipo+introducido+no+pertenece+a+ningun+equipo";
+					}
 
-		//ALTA JUGADOR
-		if (tipo.equalsIgnoreCase("altajugador")) {
-			String name = request.getParameter("name");
-			String leg = request.getParameter("leg");
-			String country = request.getParameter("country");
-			int team_cod = Integer.parseInt(request.getParameter("team"));
-			int height = Integer.parseInt(request.getParameter("height"));
-			ArrayList<Jugador> jugadores = connexion.todosJugadores();
-			if (connexion.existeEquipo(team_cod)) {
-				Jugador new_player = new Jugador(jugadores.get(jugadores.size() - 1).getCod_jugador() + 1, name, team_cod, leg,
-				height, country);
-				connexion.new_jugador(new_player);
-				message = "Nuevo jugador creado";
-			} else {
-				message = "Error, código de equipo no encontrado";
-			}
-		} else if (tipo.equalsIgnoreCase("altaliga")) {
-			String country = request.getParameter("country");
-			String name = request.getParameter("name");
-			ArrayList<Liga> ligas = connexion.todasLigas();
-			int cod = ligas.get(ligas.size() - 1).getCod_liga() + 1;
-			Liga new_liga = new Liga(cod, name, country);
-			connexion.new_liga(new_liga);
-			message = "Nueva liga creada";
-		} else if (tipo.equalsIgnoreCase("altaequipo")) {
-			String name = request.getParameter("name");
-			int cod_liga = Integer.parseInt(request.getParameter("cod_liga"));
-			ArrayList<Equipo> equipos = connexion.todosEquipos();
-			int cod = equipos.get(equipos.size() - 1).getCod_eqipo() + 1;
-			if (connexion.existeLiga(cod_liga)){
-				Equipo new_equipo = new Equipo(cod, name, cod_liga);
-				connexion.new_equipo(new_equipo);
-				message = "Nuevo equipo creado";
-			}
-		} else if (tipo.equalsIgnoreCase("bajajugador")) {
-			int cod_jugador = Integer.parseInt(request.getParameter("cod_jugador"));
-			if (connexion.existeJugador(cod_jugador)) {
-				connexion.deleteJugador(cod_jugador);
-				message = "Jugador dado de baja";
-			} else {
-				message = "Error, código de jugador no encontrado";
-			}
-		} else if (tipo.equalsIgnoreCase("bajaequipo")) {
-			int cod_equipo = Integer.parseInt(request.getParameter("cod_equipo"));
-			if (connexion.existeEquipo(cod_equipo)) {
-				connexion.deleteEquipo(cod_equipo);
-				message = "Equipo dado de baja";
-			} else {
-				message = "Error, código de equipo no encontrado";
-			}
-		} else if (tipo.equalsIgnoreCase("bajaliga")) {
-			int cod_liga = Integer.parseInt(request.getParameter("cod_liga"));
-			if (connexion.existeLiga(cod_liga)) {
-				connexion.deleteLiga(cod_liga);
-				message = "Liga dada de baja";
-			} else {
-				message = "Error, código de liga no encontrado";
-			}
-		} else if (tipo.equalsIgnoreCase("modJugador")){
-			int cod_jugador = Integer.parseInt(request.getParameter("cod_jugador"));
-			int cod_equipo = Integer.parseInt(request.getParameter("team"));
-			String pierna = request.getParameter("leg");
-			String nombre = request.getParameter("name");
-			int altura = Integer.parseInt(request.getParameter("height"));
-			String pais= request.getParameter("country");
-			Jugador j = new Jugador(cod_jugador, nombre, cod_equipo, pierna, altura, pais);
-			connexion.modJugador(j);
-			message = "Datos modificados con exito";
-		}else if (tipo.equalsIgnoreCase("modEquipo")){
-			String nombre = request.getParameter("name");
-			int cod_liga = Integer.parseInt(request.getParameter("cod_liga"));
-			int cod_equipo = Integer.parseInt(request.getParameter("cod_equipo"));
-			Equipo e = new Equipo(cod_equipo, nombre, cod_liga);
-			connexion.modEquipo(e);
-			message = "Datos modificados con exito";
-		}
+				} else if (tipo.equalsIgnoreCase("bajajugador")) {
+					int cod_jugador = Integer.parseInt(request.getParameter("cod_jugador"));
+
+					if(conexionBD.existeJugador(cod_jugador)){
+						conexionBD.bajaJugador(cod_jugador);
+						estado="success";
+						contenido="Jugador+eliminado+correctamente";
+					}else{
+						estado="fail";
+						contenido="El+codigo+del+jugador+introducido+no+existe";
+					}
+				
+					
+				}else if (tipo.equalsIgnoreCase("editarjugador")) {
+				    int cod_jugador = Integer.parseInt(request.getParameter("cod_jugador"));
+				    String nombre = request.getParameter("nombre");
+				    String pierna = request.getParameter("pierna");
+				    int cod_equipo = Integer.parseInt(request.getParameter("cod_equipo"));
+				    String pais = request.getParameter("pais");
+				    int altura = Integer.parseInt(request.getParameter("altura"));
+				    
+				    if (conexionBD.existeJugador(cod_jugador)) {
+				        conexionBD.editarJugador(cod_jugador, nombre, cod_equipo, pierna, altura, pais);
+				        estado = "success";
+				        contenido = "Jugador+actualizado+correctamente";
+				    } else {
+				        estado = "fail";
+				        contenido = "El+codigo+de+jugador+introducido+no+pertenece+a+ningun+jugador+existente";
+				    }
+				
+				//Equipo    
+				} else if (tipo.equalsIgnoreCase("altaequipo")) {
+					int cod_equipo = (conexionBD.maxcodEquipo() + 1);
+					String nombre = request.getParameter("nombre");
+					int cod_liga = Integer.parseInt(request.getParameter("cod_liga"));
+					
+					if(conexionBD.existeLiga(cod_liga)){
+						conexionBD.altaEquipo(cod_equipo, nombre, cod_liga);
+						estado="success";
+						contenido="Equipo+añadido+correctamente";
+					}else{
+						estado="fail";
+						contenido="El+codigo+de+liga+introducido+no+pertenece+a+ninguna+liga";
+					}
+
+				} else if (tipo.equalsIgnoreCase("bajaequipo")) {
+					int cod_equipo = Integer.parseInt(request.getParameter("cod_equipo"));
+
+					if(conexionBD.existeEquipo(cod_equipo)){
+						conexionBD.bajaEquipo(cod_equipo);
+						estado="success";
+						contenido="Equipo+eliminado+correctamente";
+					}else{
+						estado="fail";
+						contenido="El+codigo+del+equipo+introducido+no+existe";
+					}
+				}else if (tipo.equalsIgnoreCase("editarequipo")) {
+				    int cod_equipo = Integer.parseInt(request.getParameter("cod_equipo"));
+				    String nombre = request.getParameter("nombre");
+				    int cod_liga = Integer.parseInt(request.getParameter("cod_liga"));
+				    
+				    if (conexionBD.existeEquipo(cod_equipo)) {
+				        conexionBD.editarEquipo(cod_equipo, nombre, cod_liga);
+				        estado = "success";
+				        contenido = "Equipo+actualizado+correctamente";
+				    } else {
+				        estado = "fail";
+				        contenido = "El+codigo+de+equipo+introducido+no+pertenece+a+ningun+equipo+existente";
+				    }
+
+					
+				//Liga
+				} else if (tipo.equalsIgnoreCase("altaliga")) {
+					int cod_liga = (conexionBD.maxcodLiga() + 1);
+					String nombre = request.getParameter("nombre");
+					String pais = request.getParameter("pais");
+					conexionBD.editarLiga(cod_liga, nombre, pais);
+					
+					estado="success";
+					contenido="Liga+añadida+correctamente";
+
+				} else if (tipo.equalsIgnoreCase("bajaliga")) {
+					int cod_liga = Integer.parseInt(request.getParameter("cod_liga"));
+					
+					if(conexionBD.existeLiga(cod_liga)){
+						conexionBD.bajaLiga(cod_liga);
+						estado="success";
+						contenido="Liga+eliminada+correctamente";
+					}else{
+						estado="fail";
+						contenido="El+codigo+de+la+liga+introducida+no+existe";
+					}
+				}else if (tipo.equalsIgnoreCase("editarliga")) {
+				    int cod_liga = Integer.parseInt(request.getParameter("cod_liga"));
+				    String nombre = request.getParameter("nombre");
+				    String pais = request.getParameter("pais");
+
+				    if (conexionBD.existeLiga(cod_liga)) {
+				        conexionBD.editarLiga(cod_liga, nombre, pais);
+				        estado = "success";
+				        contenido = "Liga+actualizada+correctamente";
+				    } else {
+				        estado = "fail";
+				        contenido = "El+codigo+de+liga+introducido+no+pertenece+a+ninguna+liga+existente";
+				    }
+				}
 		%>
 		<!-- Header -->
 		<div id="header">
@@ -163,7 +211,7 @@
 
 				<h1>
 					<%
-					out.print(message);
+					out.print(contenido);
 					%>
 				</h1>
 			</div>
